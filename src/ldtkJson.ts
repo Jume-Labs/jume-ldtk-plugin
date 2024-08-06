@@ -1,4 +1,7 @@
 /**
+ * This is ported from the haxe api
+ * https://github.com/deepnight/ldtk-haxe-api/blob/master/src/ldtk/Json.hx
+ * 
 	This is the root of any Project JSON file. It contains:
 
 - the project settings,
@@ -39,6 +42,9 @@ export type ProjectJson = {
 	**/
 
   worldGridHeight?: number;
+
+  /** A structure containing all the definitions of this project **/
+  defs: LdtkDefinitionsJson;
 
   /**
 		All levels. The order of this array is only relevant in `LinearHorizontal` and `linearVertical` world layouts (see `worldLayout` value).
@@ -107,6 +113,39 @@ export type WorldJson = {
 };
 
 /**
+  If you're writing your own LDtk importer, you should probably just ignore *most* stuff in the `defs` section, as it
+  contains data that are mostly important to the editor. To keep you away from the `defs` section and avoid some 
+  unnecessary JSON parsing, important data from definitions is often duplicated in fields prefixed with a double 
+  underscore (eg. `__identifier` or `__type`).
+
+  The 2 only definition types you might need here are **Tilesets** and **Enums**.
+**/
+type LdtkDefinitionsJson = {
+  /** All tilesets **/
+  tilesets: LdtkTilesetDefJson[];
+};
+
+/**
+  The `Tileset` definition is the most important part among project definitions. It contains some extra informations
+  about each integrated tileset. If you only had to parse one definition section, that would be the one.
+**/
+type LdtkTilesetDefJson = {
+  /** User defined unique identifier **/
+  identifier: string;
+
+  /** Unique Intidentifier **/
+  uid: number;
+
+  tileGridSize: number;
+
+  /** Space in pixels between all tiles **/
+  spacing: number;
+
+  /** Distance in pixels from image borders **/
+  padding: number;
+};
+
+/**
 This section contains all the level data. It can be found in 2 distinct forms, depending on Project current settings:
 
 - If "*Separate level files*" is **disabled** (default): full level data is *embedded* inside the main Project JSON file,
@@ -115,7 +154,7 @@ This section contains all the level data. It can be found in 2 distinct forms, d
 A `ldtkl` file is just a JSON file containing exactly what is described below.
 **/
 
-type LevelJson = {
+export type LevelJson = {
   /** Unique Int identifier **/
   uid: number;
 
@@ -201,7 +240,7 @@ export type LayerInstanceJson = {
   __identifier: string;
 
   /** Layer type (possible values: numberGrid, Entities, Tiles or AutoLayer) **/
-  __type: string;
+  __type: LayerType;
 
   /** Grid-based width **/
   __cWid: number;

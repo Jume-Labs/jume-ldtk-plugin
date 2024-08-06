@@ -1,11 +1,17 @@
 export class LdtkTile {
-  flipX: boolean;
+  readonly size: number;
 
-  flipY: boolean;
+  get id(): number {
+    return this._id;
+  }
 
-  id: number;
+  get flipX(): boolean {
+    return this._flipX;
+  }
 
-  size: number;
+  get flipY(): boolean {
+    return this._flipY;
+  }
 
   get renderWidth(): number {
     return this.flipX ? -this.size : this.size;
@@ -23,24 +29,30 @@ export class LdtkTile {
     return this.flipY ? this.size : 0;
   }
 
+  private _id: number;
+
+  private _flipX: boolean;
+
+  private _flipY: boolean;
+
   constructor(id: number, flipX: boolean, flipY: boolean, size: number) {
-    this.id = id;
-    this.flipX = flipX;
-    this.flipY = flipY;
+    this._id = id;
+    this._flipX = flipX;
+    this._flipY = flipY;
     this.size = size;
   }
 
   clone(): LdtkTile {
-    return new LdtkTile(this.id, this.flipX, this.flipY, this.size);
+    return new LdtkTile(this._id, this._flipX, this._flipY, this.size);
   }
 
   isEmpty(): boolean {
-    return this.id === -1;
+    return this._id === -1;
   }
 
   set(id: number, flipX: boolean, flipY: boolean): void {
-    this.id = id;
-    this.flipX = flipX;
-    this.flipY = flipY;
+    this._id = id;
+    this._flipX = flipX;
+    this._flipY = flipY;
   }
 }
